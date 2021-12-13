@@ -28,7 +28,12 @@ func FromImage(img image.Image) *Image {
 		image: C.zbar_image_create(),
 	}
 
-	ret.gray = imaging.Grayscale(img)
+	// get the height and width of the given image
+	bounds := img.Bounds()
+	w := bounds.Max.X - bounds.Min.X
+	h := bounds.Max.Y - bounds.Min.Y
+
+	ret.gray = (*image.Gray)(unsafe.Pointer(imaging.Grayscale(img)))
 
 	C.zbar_image_set_format(ret.image, C.ulong(0x30303859)) // Y800 (grayscale)
 	C.zbar_image_set_size(ret.image, C.uint(w), C.uint(h))
