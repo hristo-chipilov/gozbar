@@ -28,16 +28,16 @@ func FromImage(img image.Image) *Image {
 		image: C.zbar_image_create(),
 	}
 
-	// get the height and width of the given image
-	// bounds := img.Bounds()
-	// w := bounds.Max.X - bounds.Min.X
-	// h := bounds.Max.Y - bounds.Min.Y
-
 	ret.gray = imaging.Grayscale(img)
 
+	// get the height and width of the given image
+	bounds := ret.gray.Bounds()
+	w := bounds.Max.X - bounds.Min.X
+	h := bounds.Max.Y - bounds.Min.Y
+
 	C.zbar_image_set_format(ret.image, C.ulong(0x30303859)) // Y800 (grayscale)
-	// C.zbar_image_set_size(ret.image, C.uint(w), C.uint(h))
-	C.zbar_image_set_data(ret.image, unsafe.Pointer(&ret.gray.Pix[0]), C.ulong(len(ret.gray.Pix)), nil)
+	C.zbar_image_set_size(ret.image, C.uint(w), C.uint(h))
+	C.zbar_image_set_data(ret.image, unsafe.Pointer(&ret.gray.Pix[0]), C.ulong(w*h), nil)
 
 	// finalizer
 	runtime.SetFinalizer(ret, (*Image).Destroy)
