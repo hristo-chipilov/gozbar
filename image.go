@@ -63,3 +63,8 @@ func (i *Image) First() *Symbol {
 func (i *Image) Destroy() {
 	C.zbar_image_destroy(i.image)
 }
+
+// Destroy this object
+func (i *Image) GetGray() *image.NRGBA {
+	return i.gray
+}
